@@ -16,6 +16,7 @@ public class User {
 
     //Accessors
     public String getName(){return name;}
+    public String getUserType(){return "User";}
     //Mutators
     public void setName(String Name){name = Name;}
     public boolean resetPassword(String oldPass, String newPass){
