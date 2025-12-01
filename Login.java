@@ -1,13 +1,9 @@
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.swing.*;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.io.File;
 
 public class Login implements ActionListener{
@@ -53,6 +49,7 @@ public class Login implements ActionListener{
     }
     public void actionPerformed(ActionEvent e){
         if(e.getSource().equals(loginButton)){
+            boolean tf = true;
             if(isAdmin){
                 try {
                     Scanner sc = new Scanner(new File("AdminLogin.csv"));
@@ -68,6 +65,7 @@ public class Login implements ActionListener{
                             if(strs[0].equals(user)&&strs[1].equals(pass)){
                                 //AdminPanel panel = new AdminPanel();
                                 frame.dispose();
+                                tf = false;
                             }
                         } catch (Exception exc) {
 
@@ -90,8 +88,9 @@ public class Login implements ActionListener{
                         try {
                             String[] strs = sc.nextLine().split(",");
                             if(strs[0].equals(user)&&strs[1].equals(pass)){
-                                CustomerPanel panel = new CustomerPanel();
+                                CustomerPanel panel = new CustomerPanel(user);
                                 frame.dispose();
+                                tf = false;
                             }
                         } catch (Exception exc) {
 
@@ -101,7 +100,10 @@ public class Login implements ActionListener{
                     exc.printStackTrace();
                 }
             }
-            
+            if(tf){
+                ErrorPanel panel = new ErrorPanel();
+                frame.dispose();
+            }
         }
         if(e.getSource().equals(checkBox)){
             isAdmin = !isAdmin;
