@@ -1,47 +1,23 @@
+import java.util.Scanner;
+import java.io.File;
+
 public class DataBase {
-    private class Item{
-        private String ID;
-        private String Name;
-        private String Category;
-        private double Price;
-        private int Quantity;
+    public ArrayList<Item> products = new ArrayList<>();
 
-        public Item(){
-
+    public DataBase() {
+        try {
+            Scanner sc = new Scanner(new File("Products.csv"));
+            while(sc.hasNextLine()){
+                String[] strs = sc.nextLine().split(",");
+                addProducts(strs[0], strs[1], strs[2], Double.parseDouble(strs[3]), Integer.parseInt(strs[4]));
+            }
+        } catch (Exception e) {
         }
-        public Item(String id, String name){
-            ID = id;
-            Name = name;
-        }
-        public Item(String id, String name, String category, double price){
-            ID = id;
-            Name = name;
-            Category = category;
-            Price = price;
-        }
-        public Item(String id, String name, String category, double price, int quantity){
-            ID = id;
-            Name = name;
-            Category = category;
-            Price = price;
-            Quantity = quantity;
-        }
-
-        //Accessors
-        public String getID(){return ID;}
-        public String getName(){return Name;}
-        public String getCategory(){return Category;}
-        public double getPrice(){return Price;}
-        public int getItemsLeft(){return Quantity;}
-
-        //Mutators
-        public void setID(String id){ID = id;}
-        public void setName(String name){Name = name;}
-        public void setCategory(String category){Category = category;}
-        public void setItemsLeft(int quantity){Quantity = quantity;}
-        public void setPrice(double amount){
-            int temp = (int)(amount*100+0.5);
-            Price = temp/100.0;//this Rounds to the nearest Cent
-        }
+    }
+    public void addProducts(String id, String name, String category, double price){
+        products.add(new Item(id,name,category,price));
+    }
+    public void addProducts(String id, String name, String category, double price, int quantity){
+        products.add(new Item(id,name,category,price,quantity));
     }
 }
