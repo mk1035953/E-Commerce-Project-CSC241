@@ -24,7 +24,9 @@ public class ArrayList<T> implements Iterable<T> {
         if(ind>=0&&ind<size){
             arr[ind] = element;
         }
+        else{
         throw new IndexOutOfBoundsException("IndexOutOfBounds");
+    }
     }
     public T remove(int ind){
         if(ind>=0&&ind<size){

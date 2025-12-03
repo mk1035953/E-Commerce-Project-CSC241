@@ -8,7 +8,7 @@ public class CustomerPanel implements ActionListener{
     private DataBase database = new DataBase();
     private JFrame frame = new JFrame("Customer Panel");
     String[] filterTypes = {"ID", "Name", "Price", "Category","Quantity"};
-    private JComboBox filters = new JComboBox<>(filterTypes);
+    private JComboBox<String> filters = new JComboBox<>(filterTypes);
     private JTable table;
     private JButton profileButton;
     private JRadioButton sortReverse;
@@ -18,15 +18,24 @@ public class CustomerPanel implements ActionListener{
     private JScrollPane scrollPane;
     private JTextField searchBox;
     private JButton searchButton;
+    private JTextField cartEntry;
+    private JTextField cartNumEntry;
+    private JButton addToCartButton;
+    private JButton cartButton;
+    private JLabel cartLabel;
+    private JButton orderHistory;
+    private Order order;
 
     public static void main(String[] args) {
         CustomerPanel panel = new CustomerPanel("User");
     }
-    public CustomerPanel(String user){
+    public CustomerPanel(String username){
+        user = username;
         JLabel lbl1 = new JLabel("Filters");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1600, 900);
         frame.setLayout(null);
+        order = new Order(user);
 
         // Table column names
         String[] columnNames = {"ID", "Name", "Category", "Price", "Quantity"};
@@ -55,11 +64,13 @@ public class CustomerPanel implements ActionListener{
         //Set up search feature
         JLabel searchLabel = new JLabel("Search");
         searchBox = new JTextField("Enter Item Name Here");
+        searchBox.setFont(new Font("SansSerif", Font.PLAIN, 14));
         searchButton = new JButton("Search");
         searchLabel.setBounds(10,10,200,30);
         searchButton.setBounds(410,40,100,50);
         searchBox.setBounds(10,40,400,50);
         searchButton.addActionListener(this);
+        searchButton.setFont(new Font("SansSerif", Font.PLAIN, 16));
 
         //Set up sortButtons
         sortReverse = new JRadioButton("Bottom-Top");
@@ -69,20 +80,47 @@ public class CustomerPanel implements ActionListener{
         sortButtons.add(sortReverse);
         sortTop.setSelected(true);
         sortTop.setBounds(1300,320,200,20);
+        sortTop.setFont(new Font("SansSerif", Font.PLAIN, 16));
         sortReverse.setSelected(false);
+        sortReverse.setFont(new Font("SansSerif", Font.PLAIN, 16));
         sortReverse.setBounds(1300,340,200,20);
+
+        //Setup Cart Features
+        cartLabel = new JLabel("Cart");
+        cartLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        cartButton = new JButton("Cart");
+        cartButton.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        addToCartButton = new JButton("Add to Cart");
+        addToCartButton.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        cartEntry = new JTextField("Example id");
+        cartNumEntry = new JTextField("1");
+        cartButton.setBounds(0,0,0,0);
+        addToCartButton.setBounds(380,750,160,60);
+        cartLabel.setBounds(30,720,300,30);
+        cartEntry.setBounds(30,750,300,60);
+        cartNumEntry.setBounds(330,750,50,60);
+        cartNumEntry.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        cartEntry.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
+        //Setup Order History Button
+        orderHistory = new JButton("Order History");
+        orderHistory.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        orderHistory.setBounds(1235,30,160,50);
 
         //Setup ActionListeners
         sortTop.addActionListener(this);
         sortReverse.addActionListener(this);
         profileButton.addActionListener(this);
+        profileButton.setFont(new Font("SansSerif", Font.PLAIN, 16));
         filters.addActionListener(this);
+        cartButton.addActionListener(this);
+        addToCartButton.addActionListener(this);
 
         //Setting the bounds
         lbl1.setBounds(1300, 275, 100, 20);
         filters.setBounds(1300,300,200,20);
         scrollPane.setBounds(10, 100, 1200, 600);
-        profileButton.setBounds(1400,30,100,30);
+        profileButton.setBounds(1400,30,100,50);
 
         //add the parts
         frame.add(scrollPane);
@@ -94,6 +132,12 @@ public class CustomerPanel implements ActionListener{
         frame.add(searchLabel);
         frame.add(searchBox);
         frame.add(searchButton);
+        frame.add(cartButton);
+        frame.add(cartEntry);
+        frame.add(cartNumEntry);
+        frame.add(addToCartButton);
+        frame.add(cartLabel);
+        frame.add(orderHistory);
 
         frame.setVisible(true);
     }
@@ -251,6 +295,36 @@ public class CustomerPanel implements ActionListener{
                 frame.add(scrollPane);
                 frame.setVisible(true);
             }
+        }
+        if(e.getSource().equals(addToCartButton)){
+            String str1 = cartEntry.getText();
+            String str2 = cartNumEntry.getText();
+            ArrayList<Item> products = database.products;
+            ArrayList<Item> temp = new ArrayList<>();
+            for(int i = 0;i<products.size();i++){
+                if(products.get(i).getID().toLowerCase().equals(str1.toLowerCase())){
+                    Item product = products.get(i);
+                    try {
+                        product.setItemsLeft(Integer.parseInt(str2));
+                    } catch (Exception exc) {
+                        product.setItemsLeft(0);
+                    }
+                    temp.add(product);
+                }
+            }
+            if(temp.size()==1){
+                order.addToCart(temp.get(0));
+            }
+            cartLabel.setText("Item Added to Cart");
+            try {
+                cartLabel.wait(5000);
+            } catch (Exception exc) {
+            }
+            cartLabel.setText("Cart");
+        }
+        if(e.getSource().equals(orderHistory)){
+            OrderPanel panel = new OrderPanel(user,false);
+            frame.dispose();
         }
     }
     public ArrayList<Item> insertionsort(ArrayList<Item> arr, int swi){  

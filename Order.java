@@ -15,7 +15,7 @@ public class Order {
     public void writeToFile(){
         String filename = "Orders.csv";
         try(FileWriter writer = new FileWriter(filename, true)){
-            writer.write(user);
+            writer.write(user+",Placed");
 
             for (int i = 0; i < Cart.size(); i++){
                 Item item = Cart.get(i);
@@ -80,9 +80,13 @@ public class Order {
     
         
     }
+    public void addToCart(Item product){
+        Cart.add(product);
+    }
+    public ArrayList<Item> getCart(){return Cart;}
     public static void main(String[] args) {
         Order order = new Order("User");
-        Item item = new Item("ID1","Milk","Dairy",4.99,3);
+        Item item = new Item("ID1","Milk","Dairy",4.99,21);
         order.Cart.add(item);
         order.writeToFile();
     }
