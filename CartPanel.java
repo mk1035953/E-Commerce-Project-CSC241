@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.Scanner;
 import java.io.File;
+import java.awt.Font;
+
 public class CartPanel implements ActionListener{
     private class State{
         private String name;
@@ -22,9 +24,11 @@ public class CartPanel implements ActionListener{
     private JTable table;
     private Order order;
     private JLabel orderLabel;
+    private JLabel priceLabel;
 
 
-    public CartPanel(Order currOrder){
+    public CartPanel(Order currOrder, String user){
+        states = new ArrayList<>();
         try {
             Scanner sc = new Scanner(new File("StateTax.csv"));
             while(sc.hasNextLine()){
@@ -42,8 +46,32 @@ public class CartPanel implements ActionListener{
         for(int i = 0;i<states.size();i++){
             stateStrings[i] = states.get(i).getState();
         }
+
+        ArrayList<Item> products = order.getCart();
+        String[] columnNames = {"ID", "Name", "Category", "Price", "Quantity"};
+        String[][] strs = new String[products.size()][5];
+        for(int i = 0;i<products.size();i++){
+            Item product = products.get(i);
+            strs[i][0] = product.getID();
+            strs[i][1] = product.getName();
+            strs[i][2] = product.getCategory();
+            strs[i][3] = "$" + product.getPrice();
+            strs[i][4] = Integer.toString(product.getItemsLeft());
+        }
+
+        table = new JTable(strs, columnNames);
+        scrollPane = new JScrollPane(table);
+        table.setEnabled(false);
+        table.setRowHeight(25);
+        table.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 14));
+        scrollPane.setBounds(10, 100, 1200, 600);
+        frame.add(scrollPane);
         stateComboBox = new JComboBox<>(stateStrings);
 
+        priceLabel = new JLabel("Please Select a State");
+
+        frame.setLayout(null);
         frame.setBounds(0,0,1600,900);
         frame.setVisible(true);
     }   
@@ -55,13 +83,21 @@ public class CartPanel implements ActionListener{
                     currState = s;
                 }
             }
+            double price = 0;
+            ArrayList<Item> cart = order.getCart();
+            for(Item product:cart){
+                price += product.getPrice()*product.getItemsLeft();
+            }
+            price *= (1+currState.getTax());
+            priceLabel.setText("$" + (((int)(price*100))/100.0));
         }
         if(e.getSource().equals(checkOutButton)){
             if(checkProducts()){
-
+                orderLabel.setText("Order Placed");
+                order.writeToFile();
             }
             else{
-
+                orderLabel.setText("Check Amounts of Items");
             }
         }
     }

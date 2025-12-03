@@ -55,9 +55,7 @@ public class ProfileWindow implements ActionListener{
         JLabel lbl2 = new JLabel("");
         JLabel lbl3 = new JLabel("");
         lbl2.setText(user);
-        System.out.println(user);
         lbl3.setText(name);
-        System.out.println(name);
         retButton = new JButton("Return");
         retButton.addActionListener(this);
 

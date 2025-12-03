@@ -11,7 +11,7 @@ public class Order {
         Cart = new ArrayList<Item>();
     }
 
-    //Should write order in the form: Username,Product1Id,numBought,Product2Id,numBought,...
+    //Should write order in the form: Username,Placed/Completed,Product1Id,numBought,Product2Id,numBought,...
     public void writeToFile(){
         String filename = "Orders.csv";
         try(FileWriter writer = new FileWriter(filename, true)){

@@ -9,20 +9,18 @@ public class ArrayList<T> implements Iterable<T> {
     }
 
     public void add(T element) {
-        if(size<arr.length){
-            arr[size++] = element;
+        if(size>=arr.length){
+            Object[] temp = new Object[(int)(arr.length * 1.5)];
+            System.arraycopy(arr, 0, temp, 0, size);
+            arr = (T[]) temp;
         }
-        else{
-            Object[] temp = new Object[(int)(arr.length*1.5)];
-            for(int i = 0;i<arr.length;i++){
-                temp[i] = arr[size];
-            }
-            arr = (T[])temp;
-        }
+        arr[size++] = element;
     }
-    public void set(int ind, T element){
+    public T set(int ind, T element){
         if(ind>=0&&ind<size){
+            T old = arr[ind];
             arr[ind] = element;
+            return old;
         }
         else{
         throw new IndexOutOfBoundsException("IndexOutOfBounds");
@@ -32,11 +30,13 @@ public class ArrayList<T> implements Iterable<T> {
         if(ind>=0&&ind<size){
             T ret = arr[ind];
 
-            for(int i = ind;i<--size;i++){
+            for(int i = ind;i<size-1;i++){
                 arr[i] = arr[i+1];
             }
+            size--;
+            arr[size] = null;
             
-            return arr[ind];
+            return ret;
         }
         throw new IndexOutOfBoundsException("IndexOutOfBounds");
     }
@@ -59,7 +59,7 @@ public class ArrayList<T> implements Iterable<T> {
 
         @Override
         public boolean hasNext() {
-            return currentIndex < arr.length;
+            return currentIndex < size;
         }
 
         @Override

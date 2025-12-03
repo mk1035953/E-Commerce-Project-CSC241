@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.util.Scanner;
+import java.io.File;
 
 public class CustomerPanel implements ActionListener{
     private String user;
@@ -94,7 +96,7 @@ public class CustomerPanel implements ActionListener{
         addToCartButton.setFont(new Font("SansSerif", Font.PLAIN, 16));
         cartEntry = new JTextField("Example id");
         cartNumEntry = new JTextField("1");
-        cartButton.setBounds(0,0,0,0);
+        cartButton.setBounds(1300,750,160,50);
         addToCartButton.setBounds(380,750,160,60);
         cartLabel.setBounds(30,720,300,30);
         cartEntry.setBounds(30,750,300,60);
@@ -305,7 +307,12 @@ public class CustomerPanel implements ActionListener{
                 if(products.get(i).getID().toLowerCase().equals(str1.toLowerCase())){
                     Item product = products.get(i);
                     try {
-                        product.setItemsLeft(Integer.parseInt(str2));
+                        if(product.getItemsLeft()>Integer.parseInt(str2)){
+                            product.setItemsLeft(Integer.parseInt(str2));
+                        }
+                        else{
+                            product.setItemsLeft(0);
+                        }
                     } catch (Exception exc) {
                         product.setItemsLeft(0);
                     }
@@ -321,6 +328,10 @@ public class CustomerPanel implements ActionListener{
             } catch (Exception exc) {
             }
             cartLabel.setText("Cart");
+        }
+        if(e.getSource().equals(cartButton)){
+            CartPanel panel = new CartPanel(order, user);
+            frame.dispose();
         }
         if(e.getSource().equals(orderHistory)){
             OrderPanel panel = new OrderPanel(user,false);
