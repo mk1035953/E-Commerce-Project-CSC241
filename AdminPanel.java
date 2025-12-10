@@ -428,4 +428,7 @@ public class AdminPanel implements ActionListener{
         }
         return tempArr;
     }
+    public void setOrder(Order newOrder){
+        order = newOrder;
+    }
 }

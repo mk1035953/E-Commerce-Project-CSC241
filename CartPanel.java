@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 
 public class CartPanel implements ActionListener{
     private String user;
-    private JFrame frame = new JFrame("Customer Panel");
+    private JFrame frame = new JFrame("Cart Panel");
     String[] filterTypes = {"ID", "Name", "Price", "Category","Quantity"};
     private JComboBox<String> filters = new JComboBox<>(filterTypes);
     private JTable table;
@@ -178,8 +178,13 @@ public class CartPanel implements ActionListener{
             }
         }
         if(e.getSource().equals(profileButton)){
-            CustomerPanel panel = new CustomerPanel(user);
-            panel.setOrder(order);
+            if(isAdmin){
+                AdminPanel panel = new AdminPanel(user);
+                panel.setOrder(order);
+            }else{
+                CustomerPanel panel = new CustomerPanel(user);
+                panel.setOrder(order);
+            }
             frame.dispose();
         }
         if(e.getSource().equals(filters)){
