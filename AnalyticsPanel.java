@@ -13,6 +13,10 @@ public class AnalyticsPanel implements ActionListener{
     private JButton retButton;
     private String user;
 
+    public static void main(String[] args) {
+        AdminPanel panel = new AdminPanel("Admin");
+    }
+
     //Constructor
     public AnalyticsPanel(String username){
         user = username;
@@ -29,9 +33,46 @@ public class AnalyticsPanel implements ActionListener{
             count++;
         }
 
+        sc.close();
+        sc = new Scanner(new File("Products.csv"));
+        ArrayList<Item> products = new ArrayList<>();
+        int numProducts = 0;
+        while(sc.hasNextLine()){
+            String[] strs = sc.nextLine().split(",");
+            products.add(new Item(strs[0],strs[1],strs[2],Double.parseDouble(strs[3]), Integer.parseInt(strs[4])));
+            numProducts++;
+        }
 
+        double[] numBoughts = new double[numProducts];
+        for(int i = 0;i<numBoughts.length;i++){
+            numBoughts[i] = 0;
+        }
+
+        sc.close();
         for(int i = 0; i<orders.size(); i++){
+            ArrayList<Item> cart = orders.get(i).getCart();
+            sc = new Scanner(new File("Products.csv"));
+            int prodNum = 0;
+            int cartNum = 0;
+            insertionsort(cart);
+            while(sc.hasNextLine()){
+                String[] strs = sc.nextLine().split(",");
+                if(strs[0].equals(cart.get(cartNum).getID())){
+                    numBoughts[prodNum] += cart.get(cartNum).getItemsLeft();
+                }
+                prodNum++;
+            }
+            sc.close();
+        }
 
+        for(int i = 0;i<numBoughts.length;i++){
+            numBoughts[i] = numBoughts[i] / count;
+        }
+        ArrayList<Item> avgCart = new ArrayList<>();
+        for(int i = 0; i< numBoughts.length;i++){
+            Item product = products.get(i);
+            product.setItemsLeft((int)(numBoughts[i]+0.5));
+            avgCart.add(product);
         }
 
         //Setup Swing stuff
@@ -42,6 +83,8 @@ public class AnalyticsPanel implements ActionListener{
         // Table column names
         String[] columnNames = {"ID", "Name", "Category", "Price", "Quantity"};
 
+        avgOrder = new Order(username);
+        avgOrder.setCart(avgCart);
         // Table data (rows)
         ArrayList<Item> Cart = avgOrder.getCart();
         String[][] strs = new String[Cart.size()][5];
@@ -60,9 +103,20 @@ public class AnalyticsPanel implements ActionListener{
         table.setRowHeight(25);
         table.setFont(new Font("SansSerif", Font.PLAIN, 14));
         table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 14));
+        scrollPane.setBounds(10, 100, 1200, 750);
+
+        JLabel orderLabel = new JLabel("Average order");
+        orderLabel.setBounds(10,40,300,30);
+        orderLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+
+        retButton = new JButton("return");
+        retButton.setBounds(1300,750,160,50);
+        retButton.addActionListener(this);
 
         //add the parts
         frame.add(scrollPane);
+        frame.add(retButton);
+        frame.add(orderLabel);
 
         frame.setVisible(true);
             
@@ -104,5 +158,20 @@ public class AnalyticsPanel implements ActionListener{
             e.printStackTrace();
         }
         return order;
+    }
+    public ArrayList<Item> insertionsort(ArrayList<Item> arr){  
+        ArrayList<Item> tempArr = arr;
+        for (int i = 0; i < tempArr.size(); i++) {
+            Item temp = tempArr.get(i);
+            int j = i - 1;
+
+            while (j >= 0 && tempArr.get(j).getID().compareTo(temp.getID())<0) {
+                tempArr.set(j+1,tempArr.get(j));
+                j--;
+            }
+
+            tempArr.set(j+1,temp);
+        }
+        return tempArr;
     }
 }

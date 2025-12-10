@@ -139,7 +139,7 @@ public class OrderPanel implements ActionListener{
                 FileWriter writer = new FileWriter(file, false);
                 writer.close();
                 for(int i = 0; i<orders.size();i++){
-                    orders.get(i).writeToFile();
+                    orders.get(i).writeToFile(false);
                 }
             } catch (Exception exc) {
             }
@@ -185,7 +185,8 @@ public class OrderPanel implements ActionListener{
             }
         }
         if(e.getSource().equals(analyticsButton)){
-
+            AnalyticsPanel panel = new AnalyticsPanel(user);
+            frame.dispose();
         }
     }
     public Order lineToOrder(String[] orderLine){

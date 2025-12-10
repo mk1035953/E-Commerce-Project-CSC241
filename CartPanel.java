@@ -30,11 +30,13 @@ public class CartPanel implements ActionListener{
     private double[] stateTaxes = new double[50];
     private String[] stateNames = new String[50];
     private JLabel totalLabel;
+    private boolean isAdmin;
 
     public static void main(String[] args) {
         CustomerPanel panel = new CustomerPanel("User");
     }
-    public CartPanel(Order Order, String username, boolean isAdmin){
+    public CartPanel(Order Order, String username, boolean admin){
+        isAdmin = admin;
         user = username;
         JLabel lbl1 = new JLabel("Filters");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -375,8 +377,11 @@ public class CartPanel implements ActionListener{
             updateTable();
         }
         if(e.getSource().equals(cartButton)){
-            if(order.isValid()){
-                order.writeToFile();
+            if(isAdmin){
+                order.writeToFile(isAdmin);
+            }
+            else if(order.isValid()){
+                order.writeToFile(isAdmin);
             }
             else{
                 cartLabel.setText("Invalid Cart");
