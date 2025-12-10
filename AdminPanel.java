@@ -14,6 +14,7 @@ public class AdminPanel implements ActionListener{
     private JComboBox<String> filters = new JComboBox<>(filterTypes);
     private JTable table;
     private JButton profileButton;
+    private JButton productButton;
     private JRadioButton sortReverse;
     private JRadioButton sortTop;
     private boolean sortMethod = true;
@@ -63,6 +64,12 @@ public class AdminPanel implements ActionListener{
 
         //Set up ProfileButton
         profileButton = new JButton("Profile");
+
+        //Set up ProductButton
+        productButton = new JButton("Products");
+        productButton.setBounds(1400,80,100,50);
+        productButton.addActionListener(this);
+        productButton.setFont(new Font("SansSerif", Font.PLAIN, 16));
 
         //Set up search feature
         JLabel searchLabel = new JLabel("Search");
@@ -142,10 +149,15 @@ public class AdminPanel implements ActionListener{
         frame.add(addToCartButton);
         frame.add(cartLabel);
         frame.add(orderHistory);
+        frame.add(productButton);
 
         frame.setVisible(true);
     }
     public void actionPerformed(ActionEvent e){
+        if(e.getSource().equals(productButton)){
+            ProductPanel panel = new ProductPanel(user);
+            frame.dispose();
+        }
         if(e.getSource().equals(profileButton)){
             ProfileWindow window = new ProfileWindow(user, true);
             frame.dispose();

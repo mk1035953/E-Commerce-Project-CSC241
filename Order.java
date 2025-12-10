@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class Order {
     private String user;
     private ArrayList<Item> Cart;
+    private String status;
 
     //Order Class
     public Order(String username){
@@ -17,7 +18,7 @@ public class Order {
         if(isValid()){
             String filename = "Orders.csv";
             try(FileWriter writer = new FileWriter(filename, true)){
-                writer.write(user+",Placed");
+                writer.write(user+","+status);
 
                 for (int i = 0; i < Cart.size(); i++){
                     Item item = Cart.get(i);
@@ -86,6 +87,8 @@ public class Order {
     
         
     }
+    public void setStatus(String newStatus){status = newStatus;}
+    public String getStatus(){return status;}
     public void addToCart(Item product){
         Cart.add(product);
     }

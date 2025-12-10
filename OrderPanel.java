@@ -1,8 +1,7 @@
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.awt.Font;
 
 public class OrderPanel implements ActionListener{
@@ -13,6 +12,8 @@ public class OrderPanel implements ActionListener{
     private ArrayList<String> orderNames;
     private ArrayList<Order> orders;
     private JButton analyticsButton;
+    private JButton changeStatusButton;
+    private JLabel statusLabel;
     private boolean isAdmin;
     private JButton retButton;
     private String user;
@@ -80,7 +81,7 @@ public class OrderPanel implements ActionListener{
         table.setRowHeight(25);
         table.setFont(new Font("SansSerif", Font.PLAIN, 14));
         table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 14));
-        scrollPane.setBounds(10, 100, 1200, 600);
+        scrollPane.setBounds(10, 100, 1200, 750);
 
         //Add the Order ComboBox
         String[] ordersArray = new String[orderNames.size()];
@@ -96,22 +97,31 @@ public class OrderPanel implements ActionListener{
         retButton.addActionListener(this);
 
         userLabel = new JLabel(orders.get(0).getUser());
-        userLabel.setBounds(1400,30,100,50);
+        userLabel.setBounds(400,40,100,30);
         userLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+
+        statusLabel = new JLabel(orders.get(0).getStatus());
+        statusLabel.setBounds(500,40,100,30);
+        statusLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        changeStatusButton = new JButton("Change Status");
+        changeStatusButton.addActionListener(this);
+        changeStatusButton.setBounds(1350,30,200,50);
 
         //Add analytics button(Admin Only)
         analyticsButton = new JButton("Analytics");
         analyticsButton.addActionListener(this);
-        analyticsButton.setBounds(0,0,0,0);
+        analyticsButton.setBounds(1350,80,200,50);
 
         //add the parts
         frame.add(scrollPane);
         if(isAdmin){
             frame.add(analyticsButton);//Admin-Only feature
+            frame.add(changeStatusButton);
         }
         frame.add(ordersMenu);
         frame.add(retButton);
         frame.add(userLabel);
+        frame.add(statusLabel);
 
         frame.setVisible(true);
             
@@ -120,9 +130,26 @@ public class OrderPanel implements ActionListener{
 
     }
     public void actionPerformed(ActionEvent e){
+        if(e.getSource().equals(changeStatusButton)){
+            try {
+                int ind = ordersMenu.getSelectedIndex();
+                Order order = orders.get(ind);
+                order.setStatus("Delivered");
+                File file = new File("Orders.csv");
+                FileWriter writer = new FileWriter(file, false);
+                writer.close();
+                for(int i = 0; i<orders.size();i++){
+                    orders.get(i).writeToFile();
+                }
+            } catch (Exception exc) {
+            }
+            frame.setVisible(false);
+            frame.setVisible(true);
+        }
         if(e.getSource().equals(ordersMenu)){
             int ind = ordersMenu.getSelectedIndex();
             userLabel.setText(orders.get(ind).getUser());
+            statusLabel.setText(orders.get(ind).getStatus());
             ArrayList<Item> cart = orders.get(ind).getCart();
             String[] columnNames = {"ID", "Name", "Category", "Price", "Quantity"};
             String[][] strs = new String[cart.size()][5];
@@ -163,6 +190,7 @@ public class OrderPanel implements ActionListener{
     }
     public Order lineToOrder(String[] orderLine){
         Order order = new Order(orderLine[0]);
+        order.setStatus(orderLine[1]);
         try {
             for(int i = 2;i<orderLine.length;i+=2){
                 String str1 = orderLine[i];
