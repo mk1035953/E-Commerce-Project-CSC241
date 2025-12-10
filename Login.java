@@ -51,7 +51,7 @@ public class Login implements ActionListener{
             boolean tf = true;
             if(isAdmin){
                 try {
-                    Scanner sc = new Scanner(new File("AdminLogin.csv"));
+                    Scanner sc = new Scanner(new File("AdminLogins.csv"));
                     while(sc.hasNextLine()){
                         String user = userEntry.getText();
                         String pass = "";
@@ -62,7 +62,7 @@ public class Login implements ActionListener{
                         try {
                             String[] strs = sc.nextLine().split(",");
                             if(strs[0].equals(user)&&strs[1].equals(pass)){
-                                //AdminPanel panel = new AdminPanel();
+                                AdminPanel panel = new AdminPanel(user);
                                 frame.dispose();
                                 tf = false;
                             }

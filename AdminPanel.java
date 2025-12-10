@@ -6,11 +6,11 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class CustomerPanel implements ActionListener{
+public class AdminPanel implements ActionListener{
     private String user;
     private DataBase database = new DataBase();
-    private JFrame frame = new JFrame("Customer Panel");
-    String[] filterTypes = {"ID", "Name", "Price", "Category","Quantity"};
+    private JFrame frame = new JFrame("Admin Panel");
+    private String[] filterTypes = {"ID", "Name", "Price", "Category","Quantity"};
     private JComboBox<String> filters = new JComboBox<>(filterTypes);
     private JTable table;
     private JButton profileButton;
@@ -30,9 +30,9 @@ public class CustomerPanel implements ActionListener{
     private Order order;
 
     public static void main(String[] args) {
-        CustomerPanel panel = new CustomerPanel("User");
+        AdminPanel panel = new AdminPanel("");
     }
-    public CustomerPanel(String username){
+    public AdminPanel(String username){
         user = username;
         JLabel lbl1 = new JLabel("Filters");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -147,7 +147,7 @@ public class CustomerPanel implements ActionListener{
     }
     public void actionPerformed(ActionEvent e){
         if(e.getSource().equals(profileButton)){
-            ProfileWindow window = new ProfileWindow(user, false);
+            ProfileWindow window = new ProfileWindow(user, true);
             frame.dispose();
         }
         if(e.getSource().equals(filters)){
@@ -310,11 +310,6 @@ public class CustomerPanel implements ActionListener{
                     String[] item = sc.nextLine().split(",");
                     Item product = new Item(item[0],item[1],item[2],Double.parseDouble(item[3]), Integer.parseInt(str2));
                     if(product.getID().equals(str1)){
-                        for(int i = 0;i<tempCart.size();i++){
-                            if(tempCart.get(i).getID().equals(product.getID())){
-                                product.setItemsLeft(product.getItemsLeft()+tempCart.remove(i).getItemsLeft());
-                            }
-                        }
                         tempCart.add(product);
                         Order tempOrder = new Order("");
                         tempOrder.setCart(tempCart);
@@ -329,22 +324,13 @@ public class CustomerPanel implements ActionListener{
             } catch (FileNotFoundException exc) {
                 System.out.println("Product File Not Found");
             }
-
-            if(order.isValid()){
-                cartLabel.setText("Item Added to Cart");
-                try {
-                    cartLabel.wait(5000);
-                } catch (Exception exc) {
-                }
-                cartLabel.setText("Cart");
-            }
         }
         if(e.getSource().equals(cartButton)){
-            CartPanel panel = new CartPanel(order, user, false);
+            CartPanel panel = new CartPanel(order, user, true);
             frame.dispose();
         }
         if(e.getSource().equals(orderHistory)){
-            OrderPanel panel = new OrderPanel(user,false);
+            OrderPanel panel = new OrderPanel(user,true);
             frame.dispose();
         }
     }
@@ -429,8 +415,5 @@ public class CustomerPanel implements ActionListener{
             tempArr.set(j+1,temp);
         }
         return tempArr;
-    }
-    public void setOrder(Order newOrder){
-        order = newOrder;
     }
 }

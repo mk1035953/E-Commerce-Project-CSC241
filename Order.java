@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Order {
     private String user;
@@ -13,17 +14,22 @@ public class Order {
 
     //Should write order in the form: Username,Placed/Completed,Product1Id,numBought,Product2Id,numBought,...
     public void writeToFile(){
-        String filename = "Orders.csv";
-        try(FileWriter writer = new FileWriter(filename, true)){
-            writer.write(user+",Placed");
+        if(isValid()){
+            String filename = "Orders.csv";
+            try(FileWriter writer = new FileWriter(filename, true)){
+                writer.write(user+",Placed");
 
-            for (int i = 0; i < Cart.size(); i++){
-                Item item = Cart.get(i);
-                writer.write("," + item.getID() + "," + item.getItemsLeft());
-            }
-            writer.write("\n");
-        } catch (Exception e){e.printStackTrace();}
-        updateProducts();
+                for (int i = 0; i < Cart.size(); i++){
+                    Item item = Cart.get(i);
+                    writer.write("," + item.getID() + "," + item.getItemsLeft());
+                }
+                writer.write("\n");
+            } catch (Exception e){e.printStackTrace();}
+            updateProducts();
+        }
+        else{
+            throw new IndexOutOfBoundsException("Invalid Cart");
+        }
     }
 
     // Update the Products.csv quantities by subtracting the quantities
@@ -83,10 +89,54 @@ public class Order {
     public void addToCart(Item product){
         Cart.add(product);
     }
+    public void removeFromCart(String id){
+        for(int i = 0; i<Cart.size();i++){
+            if(Cart.get(i).getID().equals(id)){
+                Cart.remove(i);
+            }
+        }
+    }
+    public boolean isValid(){
+        ArrayList<Item> products = new ArrayList<>();
+        try {
+            Scanner sc = new Scanner(new File("Products.csv"));
+            while(sc.hasNextLine()){
+                String[] item = sc.nextLine().split(",");
+                Item product = new Item(item[0],item[1],item[2],Double.parseDouble(item[3]), Integer.parseInt(item[4]));
+                products.add(product);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Product File Not Found");
+        }
+
+        for(Item cartItem: Cart){
+            boolean tf = false;
+            for(Item product : products){
+                if(product.getID().equals(cartItem.getID())){
+                    tf = tf||(product.getItemsLeft()>=cartItem.getItemsLeft());
+                }
+            }
+            if(!tf){
+                return false;
+            }
+        }
+        return true;
+    }
+    public double getPrice(double tax){
+        double sum = 0;
+        for(Item product: Cart){
+            sum += product.getItemsLeft()*product.getPrice();
+        }
+        return sum * (1+tax);
+    }
+    public String getUser(){return user;}
     public ArrayList<Item> getCart(){return Cart;}
+    public void setCart(ArrayList<Item> newCart){
+        Cart = newCart;
+    }
     public static void main(String[] args) {
         Order order = new Order("User");
-        Item item = new Item("ID1","Milk","Dairy",4.99,21);
+        Item item = new Item("ID1","Milk","Dairy",4.99,10);
         order.Cart.add(item);
         order.writeToFile();
     }
