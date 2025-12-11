@@ -1,7 +1,8 @@
 ID1,Milk,Dairy,4.99,0
-ID2,Eggs,Dairy,2.99,9
-ID3,Half&Half,Dairy,6.99,6
+ID2,Eggs,Dairy,2.99,8
+ID3,Half&Half,Dairy,6.99,3
 ID4,Bananas,Produce,1.29,12
 ID5,Strawberries,Produce,2.99,10
 ID6,Chips,SnackFoods,2.69,20
-ID7,Butter,Dairy,2.89,3
+ID7,Butter,Dairy,2.89,1
+ID8,Pineapple,Produce,2.89,15
